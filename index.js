@@ -20,9 +20,7 @@ server.get("/api/cohorts", (req, res) => {
       res.status(200).json(cohorts);
     })
     .catch(err => {
-      releaseEvents
-        .status(500)
-        .json({ error: "The cohorts could not be retrieved." });
+      res.status(500).json({ error: "The cohorts could not be retrieved." });
     });
 });
 
@@ -45,6 +43,22 @@ server.get("/api/cohorts/:id", (req, res) => {
       res
         .status(500)
         .json({ error: "The cohort with the specified ID does not exist." });
+    });
+});
+
+// GET - READ students with a specific ID
+server.get("/api/cohorts/:id/students", (req, res) => {
+  const id = req.params.id;
+
+  db("students")
+    .where({ cohort_id: id })
+    .then(students => {
+      res.status(200).json(students);
+    })
+    .catch(err => {
+      releaseEvents
+        .status(500)
+        .json({ error: "The students could not be retrieved." });
     });
 });
 

@@ -66,6 +66,29 @@ server.post("/api/cohorts", (req, res) => {
     }
 })
 
+// PUT - UPDATE
+server.put("/api/cohorts/:id", (req, res) => {
+    const id = req.params.id;
+    const changes = req.body;
+
+    db("cohorts")
+    .where({ id: id })
+    .update(changes)
+    .then(cohort => {
+        if (cohort) {
+            res.status(200).json(cohort)
+        } else {
+            res.status(400).json({ error: "Please provide an ID and name for the cohort." })
+        }
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: "The cohort information could not be modified."
+        })
+    })
+})
+
+
 
 
 

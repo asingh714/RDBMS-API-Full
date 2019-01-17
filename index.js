@@ -1,126 +1,17 @@
 const express = require("express");
-const knex = require("knex");
 
-const knexConfig = require("./knexfile.js");
+const cohortsRouter = require("./cohorts/cohortsRouter");
+const studentsRouter = require("./students/studentsRouter");
 
 const server = express();
 
 server.use(express.json());
 
-const db = knex(knexConfig.development);
-
 server.get("/", (req, res) => {
   res.send("API IS WORKING");
 });
 
-// GET - READ
-server.get("/api/cohorts", (req, res) => {
-  db("cohorts")
-    .then(cohorts => {
-      res.status(200).json(cohorts);
-    })
-    .catch(err => {
-      res.status(500).json({ error: "The cohorts could not be retrieved." });
-    });
-});
-
-// GET - READ with specific ID
-server.get("/api/cohorts/:id", (req, res) => {
-  const id = req.params.id;
-
-  db("cohorts")
-    .where({ id: id })
-    .then(cohort => {
-      if (cohort) {
-        res.status(200).json(cohort);
-      } else {
-        res
-          .status(404)
-          .json({ error: "The cohort with the specified ID was not found." });
-      }
-    })
-    .catch(err => {
-      res
-        .status(500)
-        .json({ error: "The cohort with the specified ID does not exist." });
-    });
-});
-
-// GET - READ students with a specific ID
-server.get("/api/cohorts/:id/students", (req, res) => {
-  const id = req.params.id;
-
-  db("students")
-    .where({ cohort_id: id })
-    .then(students => {
-      res.status(200).json(students);
-    })
-    .catch(err => {
-      releaseEvents
-        .status(500)
-        .json({ error: "The students could not be retrieved." });
-    });
-});
-
-// POST - ADD
-server.post("/api/cohorts", (req, res) => {
-  const cohort = req.body;
-
-  if (!cohort.name) {
-    res.status(400).json({
-      error: "Please provide a name for the cohort"
-    });
-  } else {
-    db("cohorts")
-      .insert(cohort)
-      .then(result => {
-        res.status(201).json(result);
-      })
-      .catch(err => {
-        res.status(500).json({
-          error: "There was an error while saving the cohort to the database."
-        });
-      });
-  }
-});
-
-// PUT - UPDATE
-server.put("/api/cohorts/:id", (req, res) => {
-  const id = req.params.id;
-  const changes = req.body;
-
-  db("cohorts")
-    .where({ id: id })
-    .update(changes)
-    .then(cohort => {
-      if (cohort) {
-        res.status(200).json(cohort);
-      } else {
-        res
-          .status(400)
-          .json({ error: "Please provide an ID and name for the cohort." });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: "The cohort information could not be modified."
-      });
-    });
-});
-
-// DELETE
-server.delete("/api/cohorts/:id", (req, res) => {
-  const id = req.params.id;
-
-  db("cohorts")
-    .where({ id: id })
-    .del()
-    .then(count => {
-      res.status(200).json(count);
-    })
-    .catch(err => {
-      res.status(500).json({ error: "The cohort could not be removed." });
-    });
-});
+server.use("/api/cohorts", cohortsRouter);
+server.use("/students", studentsRouter);
 
 server.listen(8000, () => console.log("Server up on 8000"));

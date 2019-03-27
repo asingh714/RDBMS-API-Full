@@ -30,19 +30,15 @@ router.get("/:id", (req, res) => {
           .first()
           .then(cohort => {
             if (cohort) {
-              res
-                .status(200)
-                .json({
-                  id: student.id,
-                  name: student.name,
-                  cohort: cohort.name
-                });
+              res.status(200).json({
+                id: student.id,
+                name: student.name,
+                cohort: cohort.name
+              });
             } else {
-              res
-                .status(404)
-                .json({
-                  error: "The cohort with the specified ID does not exist."
-                });
+              res.status(404).json({
+                error: "The cohort with the specified ID does not exist."
+              });
             }
           });
       } else {
@@ -56,6 +52,36 @@ router.get("/:id", (req, res) => {
         error: "The student with the specified ID could not be retrieved."
       });
     });
+});
+
+router.post("/", (req, res) => {
+  const student = req.body;
+
+  if (!student.name) {
+    res.status(400).json({ error: "Please provide a name for the student." });
+  } else if (!student.cohort_id) {
+    res
+      .status(400)
+      .json({ error: "Please provide a cohort id for the student." });
+  } else {
+    db("students")
+      .insert(student)
+      .then(ids => {
+        const id = ids[0];
+        db("students")
+          .where({ id })
+          .first()
+          .then(student => {
+            res.status(201).json(student);
+          })
+          .catch(error => {
+            res.status(500).json({
+              error:
+                "There was an error while saving the student to the database."
+            });
+          });
+      });
+  }
 });
 
 module.exports = router;

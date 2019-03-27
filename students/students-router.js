@@ -104,11 +104,9 @@ router.put("/:id", (req, res) => {
         if (count > 0) {
           res.status(200).json(count);
         } else {
-          res
-            .status(404)
-            .json({
-              error: "The student with the specific ID does not exist."
-            });
+          res.status(404).json({
+            error: "The student with the specific ID does not exist."
+          });
         }
       })
       .catch(error => {
@@ -117,6 +115,28 @@ router.put("/:id", (req, res) => {
         });
       });
   }
+});
+
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  db("students")
+    .where({ id })
+    .del()
+    .then(count => {
+      if (count > 0) {
+        res.status(200).json(count);
+      } else {
+        res.status(404).json({
+          message: "The student with the specified ID does not exist."
+        });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        error: "The student could not be removed."
+      });
+    });
 });
 
 module.exports = router;

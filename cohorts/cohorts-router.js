@@ -38,4 +38,31 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+  const cohort = req.body;
+
+  if (!cohort.name) {
+    res.status(400).json({ error: "Please provide a name for the cohort." });
+  } else {
+    db("cohorts")
+    
+      .insert(cohort)
+      .then(ids => {
+        const id = ids[0];
+        db("cohorts")
+          .where({ id })
+          .first()
+          .then(cohort => {
+            res.status(201).json(cohort);
+          })
+          .catch(error => {
+            res.status(500).json({
+              error:
+                "There was an error while saving the cohort to the database."
+            });
+          });
+      });
+  }
+});
+
 module.exports = router;

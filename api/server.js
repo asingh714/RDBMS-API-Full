@@ -1,18 +1,10 @@
-const express = require("express");
-const knex = require("knex");
-
 const middleware = require("../config/middleware");
-
-const knexConfig = require("../knexfile");
-
-const db = knex(knexConfig.development);
-
+const express = require("express");
 const server = express();
-
 middleware(server);
 
+const cohortsRouter = require("../cohorts/cohorts-router");
 
-
-
+server.use("/api/cohorts", cohortsRouter);
 
 module.exports = server;

@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
       res.status(200).json(cohorts);
     })
     .catch(error => {
-      res.status(500).json({ error: "The cohorts could not be retrieved. " });
+      res.status(500).json({ error: "The cohorts could not be retrieved." });
     });
 });
 
@@ -33,7 +33,7 @@ router.get("/:id", (req, res) => {
     })
     .catch(error => {
       res.status(500).json({
-        error: "The cohort with the specified ID could not be retrieved"
+        error: "The cohort with the specified ID could not be retrieved."
       });
     });
 });
